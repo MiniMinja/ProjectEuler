@@ -1,11 +1,22 @@
 import java.util.Arrays;
+import java.util.HashSet;
 public class Solution{
   public static void main(String[] args){
+    HashSet<Integer> pandigitals = new HashSet<Integer>();
     long sum = 0;
-    for(int i = 0; i<1000;i++){
-      for(int j = 0;j<1000;j++){
-        if(isPandigital(i,j)){
+    for(int i = 100; i<1000;i++){
+      for(int j = 10;j<100;j++){
+        if(isPandigital(i,j) && !pandigitals.contains(i * j)){
           sum+=i*j;
+          pandigitals.add(i * j);
+        }
+      }
+    }
+    for(int i = 0; i<10;i++){
+      for(int j = 1000;j<9999;j++){
+        if(isPandigital(i,j) && !pandigitals.contains(i * j)){
+          sum+=i*j;
+          pandigitals.add(i * j);
         }
       }
     }
@@ -15,11 +26,19 @@ public class Solution{
     return isPandigital((""+a+b+(a*b)).toCharArray());
   }
   public static boolean isPandigital(char[] str){
-    Arrays.sort(str);
-    if(str.length != 9) return false;
+    int sum = 0;
+    int appearedOnce = 0;
     for(int i = 0;i<str.length;i++){
-      if(str[i] != '0' + i+1) return false;
+      int bit = 1;
+      bit <<= str[i]-'1';
+      if((appearedOnce & bit)==0 && (sum & bit) == 0){
+        sum |= bit;
+        appearedOnce |= bit;
+      }
+      else{
+        appearedOnce &= ~bit;
+      }
     }
-    return true;
+    return sum == 0b111111111 && appearedOnce == 0b111111111;
   }
 }
